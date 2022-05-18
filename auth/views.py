@@ -16,7 +16,6 @@ class UserCreate(generics.GenericAPIView):
         param1 -- A first parameter
         param2 -- A second parameter
         """
-        import pdb; pdb.set_trace()
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
