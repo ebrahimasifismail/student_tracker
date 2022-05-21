@@ -1,7 +1,7 @@
 from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from auth.serializers import UserSerializer
+from auth_module.serializers import UserSerializer
 from django.contrib.auth.models import User
 
 
