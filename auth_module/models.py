@@ -4,8 +4,8 @@ from django.contrib.auth.models import AbstractUser
 
 
 class Coordinates(models.Model):
-    lat = models.DecimalField(decimal_places=6, max_digits=6, blank=True, null=True)
-    long = models.DecimalField(decimal_places=6, max_digits=6,blank=True, null=True)
+    lat = models.DecimalField(decimal_places=6, max_digits=12, blank=True, null=True)
+    long = models.DecimalField(decimal_places=6, max_digits=12, blank=True, null=True)
 
 
 class AuthUser(AbstractUser):
@@ -29,7 +29,7 @@ class ContactPerson(models.Model):
     designation = models.CharField(max_length=150, blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return self.first_name
 
     class Meta:
         ordering = ["first_name"]
@@ -71,6 +71,8 @@ class ServiceHistory(models.Model):
 
 class Bus(models.Model):
 
+    sector_id = models.ForeignKey('Sector', on_delete=models.CASCADE)
+    name = models.CharField(max_length=150, blank=True, null=True)
     registration = models.CharField(max_length=150, blank=True, null=True)
     registration_validity = models.DateTimeField(blank=True, null=True)
     manufacturer = models.CharField(max_length=150, blank=True, null=True)
@@ -78,7 +80,7 @@ class Bus(models.Model):
     year_of_manufacturer = models.IntegerField(blank=True, null=True)
     capacity = models.IntegerField(blank=True, null=True) # number of seats
     service_history = models.ManyToManyField('ServiceHistory', blank=True)
-    mileage = models.DecimalField(decimal_places=3, max_digits=3,blank=True, null=True)
+    mileage = models.DecimalField(decimal_places=3, max_digits=6, blank=True, null=True)
     insurance = models.CharField(max_length=150, blank=True, null=True)
     insurance_validity = models.DateTimeField(blank=True, null=True)
 
@@ -92,6 +94,7 @@ class Bus(models.Model):
 
 class Driver(models.Model):
 
+    sector_id = models.ForeignKey('Sector', on_delete=models.CASCADE)
     user = models.ForeignKey('AuthUser', on_delete=models.CASCADE)
     date_of_join = models.DateTimeField(blank=True, null=True)
     phone = models.CharField(max_length=150, blank=True, null=True)
@@ -105,11 +108,12 @@ class Driver(models.Model):
 
     class Meta:
         ordering = ["user"]
-        verbose_name_plural = "buses"
+        verbose_name_plural = "drivers"
 
 
 class Route(models.Model):
 
+    sector_id = models.ForeignKey('Sector', on_delete=models.CASCADE)
     start_point = models.CharField(max_length=150, blank=True, null=True)
     destination = models.CharField(max_length=150, blank=True, null=True)
     start_point_coordinates = models.ForeignKey('Coordinates',
@@ -124,8 +128,6 @@ class Route(models.Model):
 
     class Meta:
         verbose_name_plural = "routes"
-
-
 
 
 class WayPoint(models.Model):
@@ -149,9 +151,10 @@ class TripWayPointData(models.Model):
     trip = models.ForeignKey('Trip', on_delete=models.CASCADE)
     way_point = models.ForeignKey('WayPoint', on_delete=models.CASCADE)
     arrival_time = models.DateTimeField(blank=True, null=True)
+    sort_order = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
-        return self.trip
+        return f"Trip: {str(self.trip.id)} WayPoint: {self.way_point.way_point_name}"
 
     class Meta:
         ordering = ["trip"]
