@@ -106,7 +106,7 @@ class ListSectors(generics.ListAPIView):
         queryset = self.get_queryset()
         serializer = SectorSerializer(queryset, many=True)
         return return_success_response(data=serializer.data,
-                                       token=request.auth.token,
+                                       token=request.auth.token if request.auth else "",
                                        message="Sectors listed Successfully"
                                        )
 
@@ -124,10 +124,10 @@ class ListBusesBySector(generics.ListAPIView):
         sector_id -- Unique identifier for Sector
         """
         sector_id = kwargs.get("id")
-        queryset = self.get_queryset().filter(id=sector_id)
+        queryset = self.get_queryset().filter(sector_id=sector_id)
         serializer = BusSerializer(queryset, many=True)
         return return_success_response(data=serializer.data,
-                                       token=request.auth.token,
+                                       token=request.auth.token if request.auth else "",
                                        message=f"Buses for sector {sector_id} listed Successfully"
                                        )
 
@@ -145,10 +145,10 @@ class ListRoutesBySector(generics.ListAPIView):
         sector_id -- Unique identifier for Sector
         """
         sector_id = kwargs.get("id")
-        queryset = self.get_queryset().filter(id=sector_id)
+        queryset = self.get_queryset().filter(sector_id=sector_id)
         serializer = RouteSerializer(queryset, many=True)
         return return_success_response(data=serializer.data,
-                                       token=request.auth.token,
+                                       token=request.auth.token if request.auth else "",
                                        message=f"Routes for sector {sector_id} listed Successfully"
                                        )
 
@@ -166,12 +166,12 @@ class ListActiveTripByBus(generics.ListAPIView):
         param1 -- A first parameter
         param2 -- A second parameter
         """
-        sector_id = kwargs.get("id")
-        queryset = self.get_queryset().filter(id=sector_id, status="ACTIVE")
+        bus_id = kwargs.get("id")
+        queryset = self.get_queryset().filter(bus=bus_id, status="ACTIVE")
         serializer = ActiveTripSerializer(queryset, many=True)
         return return_success_response(data=serializer.data,
-                                       token=request.auth.token,
-                                       message="User created Successfully"
+                                       token=request.auth.token if request.auth else "",
+                                       message="Active Trips Listed"
                                        )
 
 

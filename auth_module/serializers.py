@@ -105,7 +105,7 @@ class TripSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Trip
-        fields = "__all__"
+        fields = fields = ('bus', 'driver', 'route', 'status')
 
 
 class TripWayPointDataSerializer(serializers.ModelSerializer):

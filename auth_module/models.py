@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser
 
 
 class Coordinates(models.Model):
+    name = models.CharField(max_length=150, default="place_name", blank=True, null=True)
     lat = models.DecimalField(decimal_places=6, max_digits=12, blank=True, null=True)
     long = models.DecimalField(decimal_places=6, max_digits=12, blank=True, null=True)
 
@@ -166,8 +167,8 @@ class Trip(models.Model):
     bus = models.ForeignKey('Bus', on_delete=models.CASCADE)
     driver = models.ForeignKey('Driver', on_delete=models.CASCADE)
     route = models.ForeignKey('Route', on_delete=models.CASCADE)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    start_time = models.DateTimeField(auto_now_add=True)
+    end_time = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=150, blank=True, null=True)
 
     def __str__(self):
