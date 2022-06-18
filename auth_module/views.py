@@ -15,11 +15,12 @@ from auth_module.utils import return_success_response, return_failure_response
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-
+    """
+    Customize JWT Token Response with extra user identifiers
+    """
 
     @classmethod
     def get_token(cls, user):
-        # import pdb; pdb.set_trace()
         token = super().get_token(user)
 
         # Add custom claims
@@ -30,7 +31,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
     def validate(self, attrs):
-        import pdb; pdb.set_trace()
         data = super().validate(attrs)
         refresh = self.get_token(self.user)
         data['refresh'] = str(refresh)
@@ -45,6 +45,9 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
+    """
+        Customize JWT Token Response with extra user identifiers
+    """
     serializer_class = MyTokenObtainPairSerializer
 
     @swagger_auto_schema(
@@ -83,7 +86,7 @@ class UserCreate(generics.GenericAPIView):
 
 class ListSectors(generics.ListAPIView):
     """
-    Creates the user.
+    List all sectors.
     """
     queryset = Sector.objects.all()
     serializer_class = SectorSerializer
@@ -114,7 +117,6 @@ class ListBusesBySector(generics.ListAPIView):
         """
         sector_id -- Unique identifier for Sector
         """
-        import pdb; pdb.set_trace()
         sector_id = kwargs.get("id")
         queryset = self.get_queryset().filter(id=sector_id)
         serializer = BusSerializer(queryset, many=True)
@@ -126,7 +128,7 @@ class ListBusesBySector(generics.ListAPIView):
 
 class ListRoutesBySector(generics.ListAPIView):
     """
-    Lists buses by sector_id.
+    Lists routes by sector_id.
     """
     queryset = Route.objects.all()
     serializer_class = RouteSerializer
@@ -169,7 +171,7 @@ class ListActiveTripByBus(generics.ListAPIView):
 
 class ListCreateTripView(generics.ListCreateAPIView):
     """
-    List active trips by bus_id
+    List Create trips
     """
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
@@ -178,7 +180,7 @@ class ListCreateTripView(generics.ListCreateAPIView):
 
 class RetrieveUpdateDestroyTripView(generics.RetrieveUpdateDestroyAPIView):
     """
-    List active trips by bus_id
+    Retrieve Update, Destroy trips
     """
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
@@ -187,7 +189,7 @@ class RetrieveUpdateDestroyTripView(generics.RetrieveUpdateDestroyAPIView):
 
 class ListCreateTripWayPointView(generics.ListCreateAPIView):
     """
-    List active trips by bus_id
+    List Create Trip Way points
     """
     queryset = TripWayPointData.objects.all()
     serializer_class = TripWayPointDataSerializer
@@ -196,7 +198,7 @@ class ListCreateTripWayPointView(generics.ListCreateAPIView):
 
 class RetrieveUpdateDestroyTripWayPointView(generics.RetrieveUpdateDestroyAPIView):
     """
-    List active trips by bus_id
+    Retrieve Update, Destroy Trip Way points
     """
     queryset = TripWayPointData.objects.all()
     serializer_class = TripWayPointDataSerializer
@@ -223,7 +225,7 @@ class RetrieveUpdateDestroySectorView(generics.RetrieveUpdateDestroyAPIView):
 
 class ListCreateWayPointView(generics.ListCreateAPIView):
     """
-    List Create sector
+    List Create way points
     """
     queryset = WayPoint.objects.all()
     serializer_class = CommonWayPointSerializer
@@ -232,7 +234,7 @@ class ListCreateWayPointView(generics.ListCreateAPIView):
 
 class RetrieveUpdateDestroyWayPointView(generics.RetrieveUpdateDestroyAPIView):
     """
-    Retrieve Update, Destroy Sector
+    Retrieve Update, Destroy Way points
     """
     queryset = WayPoint.objects.all()
     serializer_class = CommonWayPointSerializer
@@ -241,7 +243,7 @@ class RetrieveUpdateDestroyWayPointView(generics.RetrieveUpdateDestroyAPIView):
 
 class ListCreateRouteView(generics.ListCreateAPIView):
     """
-    List Create sector
+    List Create route
     """
     queryset = Route.objects.all()
     serializer_class = CommonRouteSerializer
@@ -259,7 +261,7 @@ class RetrieveUpdateDestroyRouteView(generics.RetrieveUpdateDestroyAPIView):
 
 class ListCreateBusView(generics.ListCreateAPIView):
     """
-    List Create sector
+    List Create Bus
     """
     queryset = Bus.objects.all()
     serializer_class = CommonBusSerializer
@@ -268,7 +270,7 @@ class ListCreateBusView(generics.ListCreateAPIView):
 
 class RetrieveUpdateDestroyBusView(generics.RetrieveUpdateDestroyAPIView):
     """
-    Retrieve Update, Destroy Sector
+    Retrieve Update, Destroy Bus
     """
     queryset = Bus.objects.all()
     serializer_class = CommonBusSerializer
@@ -277,7 +279,7 @@ class RetrieveUpdateDestroyBusView(generics.RetrieveUpdateDestroyAPIView):
 
 class ListCreateDriverView(generics.ListCreateAPIView):
     """
-    List Create sector
+    List Create Driver
     """
     queryset = Driver.objects.all()
     serializer_class = DriverSerializer
@@ -286,7 +288,7 @@ class ListCreateDriverView(generics.ListCreateAPIView):
 
 class RetrieveUpdateDestroyDriverView(generics.RetrieveUpdateDestroyAPIView):
     """
-    Retrieve Update, Destroy Sector
+    Retrieve Update, Destroy Driver
     """
     queryset = Driver.objects.all()
     serializer_class = DriverSerializer
@@ -295,7 +297,7 @@ class RetrieveUpdateDestroyDriverView(generics.RetrieveUpdateDestroyAPIView):
 
 class ListCreateContactPersonView(generics.ListCreateAPIView):
     """
-    List Create sector
+    List Create Contact Person
     """
     queryset = ContactPerson.objects.all()
     serializer_class = ContactPersonSerializer
@@ -304,7 +306,7 @@ class ListCreateContactPersonView(generics.ListCreateAPIView):
 
 class RetrieveUpdateDestroyContactPersonView(generics.RetrieveUpdateDestroyAPIView):
     """
-    Retrieve Update, Destroy Sector
+    Retrieve Update, Destroy Contact Person
     """
     queryset = ContactPerson.objects.all()
     serializer_class = ContactPersonSerializer
