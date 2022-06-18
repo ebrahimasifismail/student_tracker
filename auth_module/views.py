@@ -41,6 +41,12 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['id'] = self.user.id
         data["email"] = self.user.email
         data["user_type"] = self.user.user_type
+        driver = Driver.objects.filter(user=self.user.id)
+        data["driver_sector"] = ""
+        if driver:
+            driver = driver.first()
+            data["driver_sector"] = driver.sector_id.id
+
         return data
 
 
@@ -90,7 +96,7 @@ class ListSectors(generics.ListAPIView):
     """
     queryset = Sector.objects.all()
     serializer_class = SectorSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def list(self, request):
         """
@@ -111,7 +117,7 @@ class ListBusesBySector(generics.ListAPIView):
     """
     queryset = Bus.objects.all()
     serializer_class = BusSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
         """
@@ -153,7 +159,7 @@ class ListActiveTripByBus(generics.ListAPIView):
     """
     queryset = Trip.objects.all()
     serializer_class = ActiveTripSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
         """
