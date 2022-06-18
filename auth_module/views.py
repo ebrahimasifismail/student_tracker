@@ -74,12 +74,12 @@ class UserCreate(generics.GenericAPIView):
             user = serializer.save()
             if user:
                 return return_success_response(data=serializer.data,
-                                               token=request.auth.token,
+                                               token=request.auth.token if request.auth.token else "",
                                                message="User created Successfully"
                                                )
         else:
             return return_failure_response(data=serializer.data,
-                                           token=request.auth.token,
+                                           token=request.auth.token if request.auth.token else "",
                                            message=str(serializer.errors)
                                            )
 
