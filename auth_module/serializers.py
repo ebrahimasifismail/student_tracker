@@ -20,6 +20,13 @@ class CoordinatesSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
 
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        user = AuthUser(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user
+
     class Meta:
         model = AuthUser
         fields = ('id', 'username', 'email', 'password', 'user_type')
