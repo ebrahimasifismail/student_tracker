@@ -5,8 +5,8 @@ from django.contrib.auth.models import AbstractUser
 
 class Coordinates(models.Model):
     name = models.CharField(max_length=150, default="place_name", blank=True, null=True)
-    lat = models.DecimalField(decimal_places=6, max_digits=12, blank=True, null=True)
-    long = models.DecimalField(decimal_places=6, max_digits=12, blank=True, null=True)
+    lat = models.DecimalField(decimal_places=20, max_digits=25, blank=True, null=True)
+    long = models.DecimalField(decimal_places=20, max_digits=25, blank=True, null=True)
 
 
 class AuthUser(AbstractUser):
