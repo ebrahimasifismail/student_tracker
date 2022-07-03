@@ -43,6 +43,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data["user_type"] = self.user.user_type
         driver = Driver.objects.filter(user=self.user.id)
         data["driver_sector"] = ""
+        data["driver_id"] = ""
         if driver:
             driver = driver.first()
             data["driver_id"] = driver.id
