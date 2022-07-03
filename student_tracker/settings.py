@@ -155,7 +155,7 @@ django_heroku.settings(locals())
 # GEOS_LIBRARY_PATH = "/opt/homebrew/Cellar/geos/3.10.2/lib/libgeos_c.dylib"
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,

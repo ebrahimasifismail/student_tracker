@@ -45,6 +45,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data["driver_sector"] = ""
         if driver:
             driver = driver.first()
+            data["driver_id"] = driver.id
             data["driver_sector"] = driver.sector_id.id
 
         return data
