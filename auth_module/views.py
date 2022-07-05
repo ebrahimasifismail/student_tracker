@@ -1,9 +1,11 @@
+import datetime
+
 from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from auth_module.serializers import UserSerializer, SectorSerializer, BusSerializer, RouteSerializer, \
     ActiveTripSerializer, TripSerializer, TripWayPointDataSerializer, CommonWayPointSerializer, CommonSectorSerializer,\
-    CommonRouteSerializer, CommonBusSerializer, DriverSerializer, ContactPersonSerializer
+    CommonRouteSerializer, CommonBusSerializer, DriverSerializer, ContactPersonSerializer, EndActiveTripSerializer
 from django.contrib.auth.models import User
 from auth_module.models import Sector, Bus, Route, Trip, WayPoint, TripWayPointData, Driver, ContactPerson
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -42,13 +44,21 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data["email"] = self.user.email
         data["user_type"] = self.user.user_type
         driver = Driver.objects.filter(user=self.user.id)
+
         data["driver_sector"] = ""
         data["driver_id"] = ""
         if driver:
             driver = driver.first()
+
             data["driver_id"] = driver.id
             data["driver_sector"] = driver.sector_id.id
-
+            trip = Trip.objects.filter(driver=driver.id, status="ACTIVE")
+            data["trip_bus"] = ""
+            data["trip"] = ""
+            if trip:
+                trip = trip.first()
+                data["trip_bus"] = trip.bus.id
+                data["trip"] = trip.id
         return data
 
 
@@ -186,6 +196,38 @@ class ListCreateTripView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
 
+    def post(self, request, format='json'):
+        """
+        param1 -- A first parameter
+        param2 -- A second parameter
+        """
+        serializer = self.get_serializer(data=request.data)
+        bus_id = request.data.get("bus")
+        route_id = request.data.get("route")
+        driver_id = request.data.get("driver")
+
+        active_trips = self.get_queryset().filter(bus=bus_id, route=route_id, driver=driver_id,  status="ACTIVE")
+        if serializer.is_valid() and not active_trips:
+            user = serializer.save()
+            if user:
+                return return_success_response(data=serializer.data,
+                                               token=request.auth.token if request.auth else "",
+                                               message="Trip created Successfully"
+                                               )
+        else:
+            if active_trips:
+                return return_success_response(data=serializer.data,
+                                               token=request.auth.token if request.auth else "",
+                                               message="Active Trip already exists"
+                                               )
+            else:
+                return return_failure_response(data=serializer.data,
+                                               token=request.auth.token if request.auth else "",
+                                               message=str(serializer.errors)
+                                               )
+
+
+
 class RetrieveUpdateDestroyTripView(generics.RetrieveUpdateDestroyAPIView):
     """
     Retrieve Update, Destroy trips
@@ -202,6 +244,32 @@ class ListCreateTripWayPointView(generics.ListCreateAPIView):
     queryset = TripWayPointData.objects.all()
     serializer_class = TripWayPointDataSerializer
     permission_classes = [IsAuthenticated]
+
+    def post(self, request, format='json'):
+        """
+        param1 -- A first parameter
+        param2 -- A second parameter
+        """
+        return_data = {}
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            trip_id = serializer.data.get("trip")
+            trip_obj = Trip.objects.get(id=trip_id)
+            bus_id = trip_obj.bus.id
+            queryset = Trip.objects.filter(bus=bus_id, status="ACTIVE")
+            active_trip_serializer = ActiveTripSerializer(queryset, many=True)
+            return_data["trip_way_point"] = serializer.data
+            return_data["active_trip_data"] = active_trip_serializer.data
+            if user:
+                return return_success_response(data=return_data,
+                                               token=request.auth.token if request.auth else "",
+                                               message="Trip Way point created Successfully"
+                                               )
+        else:
+            return return_failure_response(data=serializer.data,
+                                           token=request.auth.token if request.auth else "",
+                                           message=str(serializer.errors))
 
 
 class RetrieveUpdateDestroyTripWayPointView(generics.RetrieveUpdateDestroyAPIView):
@@ -319,3 +387,33 @@ class RetrieveUpdateDestroyContactPersonView(generics.RetrieveUpdateDestroyAPIVi
     queryset = ContactPerson.objects.all()
     serializer_class = ContactPersonSerializer
     permission_classes = [IsAuthenticated]
+
+class EndActiveTripView(generics.CreateAPIView):
+    """
+    Retrieve Update, Destroy Contact Person
+    """
+    queryset = Trip.objects.all()
+    serializer_class = EndActiveTripSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            active_trip = self.get_queryset().get(id=serializer.data.get("trip_id"))
+            if active_trip:
+                active_trip.status="INACTIVE"
+                active_trip.end_time=datetime.datetime.now()
+                active_trip.save()
+                return return_success_response(data=serializer.data,
+                                               token=request.auth.token if request.auth else "",
+                                               message="Trip Ended Successfully"
+                                               )
+            else:
+                return return_failure_response(data=serializer.data,
+                                               token=request.auth.token if request.auth else "",
+                                               message="Active trip not found")
+
+        else:
+            return return_failure_response(data=serializer.data,
+                                           token=request.auth.token if request.auth else "",
+                                           message=str(serializer.errors))

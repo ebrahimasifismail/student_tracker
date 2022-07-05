@@ -143,3 +143,7 @@ class ActiveTripSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trip
         fields = "__all__"
+
+
+class EndActiveTripSerializer(serializers.Serializer):
+    trip_id = serializers.IntegerField()

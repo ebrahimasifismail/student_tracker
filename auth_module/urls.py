@@ -21,7 +21,8 @@ from auth_module.views import UserCreate, ListSectors, ListBusesBySector, MyToke
     ListCreateWayPointView, ListCreateRouteView, ListCreateSectorView, ListCreateBusView, \
     RetrieveUpdateDestroyRouteView, RetrieveUpdateDestroySectorView, RetrieveUpdateDestroyBusView, \
     ListCreateTripWayPointView, RetrieveUpdateDestroyTripWayPointView, ListCreateDriverView, \
-    RetrieveUpdateDestroyDriverView, ListCreateContactPersonView, RetrieveUpdateDestroyContactPersonView
+    RetrieveUpdateDestroyDriverView, ListCreateContactPersonView, RetrieveUpdateDestroyContactPersonView, \
+    EndActiveTripView
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from rest_framework_simplejwt import views as jwt_views
@@ -80,4 +81,5 @@ urlpatterns = [
     path('api/contact-person/<int:pk>/',
          RetrieveUpdateDestroyContactPersonView.as_view(),
          name='retrieve-update-destroy-contact-person'),
+    path('api/end-active-trip/', EndActiveTripView.as_view(), name='end-active-trip'),
 ]
