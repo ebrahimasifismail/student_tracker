@@ -262,7 +262,7 @@ class ListCreateTripWayPointView(generics.ListCreateAPIView):
             return_data["trip_way_point"] = serializer.data
             return_data["active_trip_data"] = active_trip_serializer.data
             if user:
-                return return_success_response(data=return_data,
+                return return_success_response(data=active_trip_serializer.data,
                                                token=request.auth.token if request.auth else "",
                                                message="Trip Way point created Successfully"
                                                )
