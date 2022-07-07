@@ -49,12 +49,11 @@ class CommonSectorSerializer(serializers.ModelSerializer):
 
 class BusSerializer(serializers.ModelSerializer):
     sector_id = SectorSerializer()
-    trip = serializers.SerializerMethodField('get_trip')
+    route = serializers.SerializerMethodField('get_trip')
 
     def get_trip(self, obj):
         trip = Trip.objects.filter(bus=obj.id, status="ACTIVE")
-        serializer = BusTripSerializer(trip, many=True)
-        return serializer.data
+        return f"{trip.first().route.start_point} - {trip.first().route.destination}" if trip else ""
 
     class Meta:
         model = Bus
