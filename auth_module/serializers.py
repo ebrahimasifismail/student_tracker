@@ -49,6 +49,12 @@ class CommonSectorSerializer(serializers.ModelSerializer):
 
 class BusSerializer(serializers.ModelSerializer):
     sector_id = SectorSerializer()
+    route = serializers.SerializerMethodField('get_route')
+
+    def get_route(self, obj):
+        routes = Route.objects.filter(sector_id=obj.sector_id.id)
+        serializer = RouteSerializer(routes, many=True)
+        return serializer.data
 
     class Meta:
         model = Bus
