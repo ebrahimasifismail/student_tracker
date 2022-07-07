@@ -49,11 +49,11 @@ class CommonSectorSerializer(serializers.ModelSerializer):
 
 class BusSerializer(serializers.ModelSerializer):
     sector_id = SectorSerializer()
-    route = serializers.SerializerMethodField('get_route')
+    trip = serializers.SerializerMethodField('get_trip')
 
-    def get_route(self, obj):
-        routes = Route.objects.filter(sector_id=obj.sector_id.id)
-        serializer = RouteSerializer(routes, many=True)
+    def get_trip(self, obj):
+        trip = Trip.objects.filter(bus=obj.id, status="ACTIVE")
+        serializer = BusTripSerializer(trip, many=True)
         return serializer.data
 
     class Meta:
@@ -111,7 +111,16 @@ class TripSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Trip
-        fields = fields = ('bus', 'driver', 'route', 'status')
+        fields = ('bus', 'driver', 'route', 'status')
+
+
+class BusTripSerializer(serializers.ModelSerializer):
+    driver = DriverSerializer()
+    route = RouteSerializer()
+
+    class Meta:
+        model = Trip
+        fields  = ('driver', 'route', 'status')
 
 
 class TripWayPointDataSerializer(serializers.ModelSerializer):
