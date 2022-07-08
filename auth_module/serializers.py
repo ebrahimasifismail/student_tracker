@@ -110,7 +110,7 @@ class TripSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Trip
-        fields = ('bus', 'driver', 'route', 'status')
+        fields = ('bus', 'driver', 'route', 'start_time', 'status')
 
 
 class BusTripSerializer(serializers.ModelSerializer):
@@ -161,3 +161,4 @@ class ActiveTripSerializer(serializers.ModelSerializer):
 
 class EndActiveTripSerializer(serializers.Serializer):
     trip_id = serializers.IntegerField()
+    end_time = serializers.DateTimeField()

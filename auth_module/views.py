@@ -402,7 +402,7 @@ class EndActiveTripView(generics.CreateAPIView):
             active_trip = self.get_queryset().get(id=serializer.data.get("trip_id"))
             if active_trip:
                 active_trip.status="INACTIVE"
-                active_trip.end_time=datetime.datetime.now()
+                active_trip.end_time = serializer.data.get("end_time")
                 active_trip.save()
                 return return_success_response(data=serializer.data,
                                                token=request.auth.token if request.auth else "",
