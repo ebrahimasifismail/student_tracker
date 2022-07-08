@@ -167,7 +167,7 @@ class Trip(models.Model):
     bus = models.ForeignKey('Bus', on_delete=models.CASCADE)
     driver = models.ForeignKey('Driver', on_delete=models.CASCADE)
     route = models.ForeignKey('Route', on_delete=models.CASCADE)
-    start_time = models.DateTimeField(auto_now_add=True)
+    start_time = models.DateTimeField(blank=True, null=True)
     end_time = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=150, blank=True, null=True)
 
