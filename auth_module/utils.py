@@ -19,3 +19,12 @@ def return_failure_response(data, token, message):
         "status": 500,
         "isSuccess": False
     })
+
+def test_response(data, token, message):
+    return Response({
+        "token": token,
+        "data": data,
+        "message": message,
+        "status": 500,
+        "isSuccess": False
+    })
